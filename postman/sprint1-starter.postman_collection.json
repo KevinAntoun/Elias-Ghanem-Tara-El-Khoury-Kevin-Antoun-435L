@@ -1,0 +1,237 @@
+{
+  "info": {
+    "name": "Sprint 1 Starter — Health and HTTP Integration",
+    "description": "Import this to verify the nine Flask processes. Graded service APIs must be added by their owners.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users /health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{usersBaseUrl}}/health",
+          "host": [
+            "{{usersBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Basic scaffold health check: users. No student API functionality."
+      },
+      "response": []
+    },
+    {
+      "name": "Assets /health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{assetsBaseUrl}}/health",
+          "host": [
+            "{{assetsBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Basic scaffold health check: assets. No student API functionality."
+      },
+      "response": []
+    },
+    {
+      "name": "Incidents /health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{incidentsBaseUrl}}/health",
+          "host": [
+            "{{incidentsBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Basic scaffold health check: incidents. No student API functionality."
+      },
+      "response": []
+    },
+    {
+      "name": "Threats /health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{threatsBaseUrl}}/health",
+          "host": [
+            "{{threatsBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Basic scaffold health check: threats. No student API functionality."
+      },
+      "response": []
+    },
+    {
+      "name": "Audit /health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{auditBaseUrl}}/health",
+          "host": [
+            "{{auditBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Basic scaffold health check: audit. No student API functionality."
+      },
+      "response": []
+    },
+    {
+      "name": "Reports /health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{reportsBaseUrl}}/health",
+          "host": [
+            "{{reportsBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Basic scaffold health check: reports. No student API functionality."
+      },
+      "response": []
+    },
+    {
+      "name": "Vulnerabilities /health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{vulnerabilitiesBaseUrl}}/health",
+          "host": [
+            "{{vulnerabilitiesBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Basic scaffold health check: vulnerabilities. No student API functionality."
+      },
+      "response": []
+    },
+    {
+      "name": "Notifications /health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{notificationsBaseUrl}}/health",
+          "host": [
+            "{{notificationsBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Basic scaffold health check: notifications. No student API functionality."
+      },
+      "response": []
+    },
+    {
+      "name": "Playbooks /health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{playbooksBaseUrl}}/health",
+          "host": [
+            "{{playbooksBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Basic scaffold health check: playbooks. No student API functionality."
+      },
+      "response": []
+    },
+    {
+      "name": "Reports dependency HTTP demo",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{reportsBaseUrl}}/reports/dependencies",
+          "host": [
+            "{{reportsBaseUrl}}"
+          ],
+          "path": [
+            "reports",
+            "dependencies"
+          ]
+        },
+        "description": "Scaffold architectural demo; reports calls users and assets health endpoints over HTTP. Not a graded required endpoint."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "usersBaseUrl",
+      "value": "http://127.0.0.1:5001",
+      "type": "string"
+    },
+    {
+      "key": "assetsBaseUrl",
+      "value": "http://127.0.0.1:5002",
+      "type": "string"
+    },
+    {
+      "key": "incidentsBaseUrl",
+      "value": "http://127.0.0.1:5003",
+      "type": "string"
+    },
+    {
+      "key": "threatsBaseUrl",
+      "value": "http://127.0.0.1:5004",
+      "type": "string"
+    },
+    {
+      "key": "auditBaseUrl",
+      "value": "http://127.0.0.1:5005",
+      "type": "string"
+    },
+    {
+      "key": "reportsBaseUrl",
+      "value": "http://127.0.0.1:5006",
+      "type": "string"
+    },
+    {
+      "key": "vulnerabilitiesBaseUrl",
+      "value": "http://127.0.0.1:5007",
+      "type": "string"
+    },
+    {
+      "key": "notificationsBaseUrl",
+      "value": "http://127.0.0.1:5008",
+      "type": "string"
+    },
+    {
+      "key": "playbooksBaseUrl",
+      "value": "http://127.0.0.1:5009",
+      "type": "string"
+    }
+  ]
+}
