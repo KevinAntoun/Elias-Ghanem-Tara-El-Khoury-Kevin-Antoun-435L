@@ -1,0 +1,2875 @@
+{
+  "info": {
+    "name": "Service 9 - Security Playbook and Response Automation (Elias Ghanem)",
+    "description": "Postman requests for the six Security Playbook and Response Automation APIs, implemented by Elias Ghanem. Run the users (5001) and playbooks (5009) services, fill in the username/password collection variables for one active account per role (ADMIN, ANALYST, AUDITOR, EMPLOYEE), then run the folders in order. Tokens, user IDs, playbook IDs and action IDs are saved automatically in collection variables. Folder 6 deletes the playbooks it created, so the collection can be run again.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Setup (login)",
+      "item": [
+        {
+          "name": "Setup - Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"adminToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"adminUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in adminToken and the user ID in adminUserId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Login as Analyst",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"analystToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"analystUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in analystToken and the user ID in analystUserId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{analystUsername}}\",\n  \"password\": \"{{analystPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Login as Auditor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"auditorToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"auditorUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in auditorToken and the user ID in auditorUserId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{auditorUsername}}\",\n  \"password\": \"{{auditorPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Login as Employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"employeeToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"employeeUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in employeeToken and the user ID in employeeUserId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{employeeUsername}}\",\n  \"password\": \"{{employeePassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. Create Playbook - POST /playbooks",
+      "item": [
+        {
+          "name": "Elias Ghanem - Create Playbook (Ransomware, Critical, 3 ordered actions)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Location header points to the playbook\", function () { pm.expect(pm.response.headers.get(\"Location\")).to.match(/^\\/playbooks\\/\\d+$/); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"playbookId\", pm.response.json().playbook.id);",
+                  "    pm.collectionVariables.set(\"actionId1\", pm.response.json().playbook.actions[0].id);",
+                  "    pm.collectionVariables.set(\"actionId2\", pm.response.json().playbook.actions[1].id);",
+                  "    pm.collectionVariables.set(\"actionId3\", pm.response.json().playbook.actions[2].id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "Admin creates a playbook with its initial ordered response actions in one transaction. created_by is the authenticated admin; every action starts as Pending.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ransomware Containment\",\n  \"description\": \"Contain, eradicate and recover from a ransomware outbreak.\",\n  \"incident_category\": \"Malware\",\n  \"severity\": \"Critical\",\n  \"actions\": [\n    {\"description\": \"Isolate infected hosts from the network\", \"step_number\": 1, \"assigned_user_id\": {{analystUserId}}},\n    {\"description\": \"Collect forensic evidence and identify the strain\", \"step_number\": 2},\n    {\"description\": \"Restore systems from clean backups\", \"step_number\": 3}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Create Playbook (Phishing, High, no actions yet)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"secondPlaybookId\", pm.response.json().playbook.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "Admin creates a playbook whose actions are added later through POST /playbooks/{id}/actions.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Phishing Response\",\n  \"description\": \"Investigate and contain a credential phishing campaign.\",\n  \"incident_category\": \"Phishing\",\n  \"severity\": \"High\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Duplicate playbook name, different case (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "Playbook names are unique regardless of case.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"RANSOMWARE CONTAINMENT\",\n  \"description\": \"Duplicate\",\n  \"incident_category\": \"Malware\",\n  \"severity\": \"High\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Invalid severity level (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "Severity must be Low, Medium, High or Critical.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"DDoS Mitigation\",\n  \"description\": \"Mitigate volumetric attacks.\",\n  \"incident_category\": \"Denial of Service\",\n  \"severity\": \"Extreme\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing incident category and severity (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "name, description, incident_category and severity are required.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"DDoS Mitigation\",\n  \"description\": \"Mitigate volumetric attacks.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Server-managed created_by rejected (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "created_by and created_at are set by the server and cannot be supplied.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"DDoS Mitigation\",\n  \"description\": \"Mitigate volumetric attacks.\",\n  \"incident_category\": \"Denial of Service\",\n  \"severity\": \"High\",\n  \"created_by\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Duplicate step numbers in initial actions (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "Each initial action needs a distinct positive step_number; nothing is created.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"DDoS Mitigation\",\n  \"description\": \"Mitigate volumetric attacks.\",\n  \"incident_category\": \"Denial of Service\",\n  \"severity\": \"High\",\n  \"actions\": [\n    {\n      \"description\": \"Enable rate limiting\",\n      \"step_number\": 1\n    },\n    {\n      \"description\": \"Contact ISP\",\n      \"step_number\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Analyst cannot create (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "Only ADMIN can create playbooks.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Analyst Playbook\",\n  \"description\": \"Not allowed.\",\n  \"incident_category\": \"Malware\",\n  \"severity\": \"Low\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Auditor cannot create (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "AUDITOR is read-only.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Auditor Playbook\",\n  \"description\": \"Not allowed.\",\n  \"incident_category\": \"Malware\",\n  \"severity\": \"Low\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "Every Service 9 endpoint requires a Bearer JWT.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"No Token\",\n  \"description\": \"Not allowed.\",\n  \"incident_category\": \"Malware\",\n  \"severity\": \"Low\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Retrieve All Playbooks - GET /playbooks",
+      "item": [
+        {
+          "name": "Elias Ghanem - Retrieve All Playbooks (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response includes count and action counts\", function () { const b = pm.response.json(); pm.expect(b.count).to.eql(b.playbooks.length); pm.expect(b.playbooks[0]).to.have.property(\"action_count\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "Lists every playbook, newest first, with action_count and completed_count."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve All Playbooks (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "ANALYST can list playbooks."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve All Playbooks (Auditor, read-only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "AUDITOR can list playbooks."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee cannot list (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "EMPLOYEE has no access to Service 9."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks"
+              ]
+            },
+            "description": "Every Service 9 endpoint requires a Bearer JWT."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Retrieve Specific Playbook - GET /playbooks/{id}",
+      "item": [
+        {
+          "name": "Elias Ghanem - Retrieve Specific Playbook with ordered actions (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Actions are ordered by step number\", function () { const steps = pm.response.json().playbook.actions.map(a => a.step_number); pm.expect(steps).to.eql([...steps].sort((a, b) => a - b)); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "Returns the complete playbook with its actions ordered by step_number."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve Specific Playbook (Auditor, read-only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "AUDITOR can view a playbook."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve invalid playbook ID (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/999999",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "999999"
+              ]
+            },
+            "description": "Unknown playbook IDs return 404."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee cannot view (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "EMPLOYEE has no access to Service 9."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "Every Service 9 endpoint requires a Bearer JWT."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Add Response Action - POST /playbooks/{id}/actions",
+      "item": [
+        {
+          "name": "Elias Ghanem - Add Response Action step 4 (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"New action is Pending\", function () { pm.expect(pm.response.json().action.status).to.eql(\"Pending\"); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"actionId4\", pm.response.json().action.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}",
+                "actions"
+              ]
+            },
+            "description": "ANALYST appends a step. The status always starts as Pending.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Reset credentials for affected accounts\",\n  \"step_number\": 4,\n  \"assigned_user_id\": {{analystUserId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Add Response Action step 1 to Phishing playbook (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"secondActionId\", pm.response.json().action.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{secondPlaybookId}}/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{secondPlaybookId}}",
+                "actions"
+              ]
+            },
+            "description": "ADMIN adds the first step of the second playbook (unassigned).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Block the sender domain at the mail gateway\",\n  \"step_number\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Duplicate step number in same playbook (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}",
+                "actions"
+              ]
+            },
+            "description": "Step numbers are unique within a playbook.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Another step two\",\n  \"step_number\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Invalid step number (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}",
+                "actions"
+              ]
+            },
+            "description": "step_number must be a positive integer.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Step zero\",\n  \"step_number\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing description (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}",
+                "actions"
+              ]
+            },
+            "description": "description and step_number are required.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"step_number\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Assignee must be ADMIN or ANALYST (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}",
+                "actions"
+              ]
+            },
+            "description": "Actions can only be assigned to active ADMIN or ANALYST users.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Review logs\",\n  \"step_number\": 5,\n  \"assigned_user_id\": {{auditorUserId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Status is server-managed (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}",
+                "actions"
+              ]
+            },
+            "description": "New actions always start as Pending; status cannot be supplied.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Review logs\",\n  \"step_number\": 5,\n  \"status\": \"Completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Add action to invalid playbook ID (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/999999/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "999999",
+                "actions"
+              ]
+            },
+            "description": "Unknown playbook IDs return 404.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Orphan step\",\n  \"step_number\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Auditor cannot add actions (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}",
+                "actions"
+              ]
+            },
+            "description": "AUDITOR is read-only.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Not allowed\",\n  \"step_number\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee cannot add actions (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}",
+                "actions"
+              ]
+            },
+            "description": "EMPLOYEE has no access to Service 9.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Not allowed\",\n  \"step_number\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}/actions",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}",
+                "actions"
+              ]
+            },
+            "description": "Every Service 9 endpoint requires a Bearer JWT.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Not allowed\",\n  \"step_number\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Update Action Status - PUT /actions/{id}/status",
+      "item": [
+        {
+          "name": "Elias Ghanem - Start step 2 before step 1 is Completed (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId2}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId2}}",
+                "status"
+              ]
+            },
+            "description": "Steps run in order: every lower-numbered step must be Completed first.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Skip from Pending to Completed (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId1}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId1}}",
+                "status"
+              ]
+            },
+            "description": "Status advances one stage at a time: Pending -> In Progress -> Completed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - completion_date before completion (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId1}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId1}}",
+                "status"
+              ]
+            },
+            "description": "completion_date may only be supplied when the action becomes Completed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\",\n  \"completion_date\": \"2026-01-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Invalid status value (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId1}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId1}}",
+                "status"
+              ]
+            },
+            "description": "status must be Pending, In Progress or Completed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Done\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Assign to Auditor rejected (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId2}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId2}}",
+                "status"
+              ]
+            },
+            "description": "assigned_user_id must reference an active ADMIN or ANALYST.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assigned_user_id\": {{auditorUserId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unsupported field step_number (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId2}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId2}}",
+                "status"
+              ]
+            },
+            "description": "Only status, assigned_user_id and completion_date can be updated.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"step_number\": 9\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Update Action Status - Start step 1 (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Step 1 is In Progress\", function () { pm.expect(pm.response.json().action.status).to.eql(\"In Progress\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId1}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId1}}",
+                "status"
+              ]
+            },
+            "description": "Step 1 has no earlier steps, so it can start.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Update Action Status - Assign step 2 to Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId2}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId2}}",
+                "status"
+              ]
+            },
+            "description": "A Pending or In Progress action can be (re)assigned to an active ADMIN or ANALYST.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assigned_user_id\": {{adminUserId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Future completion_date (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId1}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId1}}",
+                "status"
+              ]
+            },
+            "description": "completion_date cannot be in the future.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Completed\",\n  \"completion_date\": \"2999-01-01T00:00:00Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Update Action Status - Complete step 1 (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"completion_date is recorded\", function () { pm.expect(pm.response.json().action.completion_date).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId1}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId1}}",
+                "status"
+              ]
+            },
+            "description": "Completing an action records completion_date automatically.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Completed action is read-only (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId1}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId1}}",
+                "status"
+              ]
+            },
+            "description": "Completed actions cannot be changed, preserving the execution history.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assigned_user_id\": {{adminUserId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Update Action Status - Start step 2 (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId2}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId2}}",
+                "status"
+              ]
+            },
+            "description": "Step 1 is Completed, so step 2 may now start.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Start step 4 while step 3 is Pending (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId4}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId4}}",
+                "status"
+              ]
+            },
+            "description": "Ordering is enforced across every lower-numbered step.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Update Action Status - Complete step 2 (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId2}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId2}}",
+                "status"
+              ]
+            },
+            "description": "Step 2 is completed in order.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Update invalid action ID (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/999999/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "999999",
+                "status"
+              ]
+            },
+            "description": "Unknown action IDs return 404.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Auditor cannot update status (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId3}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId3}}",
+                "status"
+              ]
+            },
+            "description": "AUDITOR is read-only.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee cannot update status (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId3}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId3}}",
+                "status"
+              ]
+            },
+            "description": "EMPLOYEE has no access to Service 9.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/actions/{{actionId3}}/status",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "actions",
+                "{{actionId3}}",
+                "status"
+              ]
+            },
+            "description": "Every Service 9 endpoint requires a Bearer JWT.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve playbook progress after workflow (Auditor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Two steps completed\", function () { pm.expect(pm.response.json().playbook.completed_count).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "Shows steps 1 and 2 Completed with completion dates, steps 3 and 4 Pending."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Delete Playbook - DELETE /playbooks/{id}",
+      "item": [
+        {
+          "name": "Elias Ghanem - Unauthorized - Analyst cannot delete (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "Only ADMIN can delete playbooks."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Auditor cannot delete (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "AUDITOR is read-only."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "Every Service 9 endpoint requires a Bearer JWT."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Delete Playbook with its actions (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"deleted_id is returned\", function () { pm.expect(String(pm.response.json().deleted_id)).to.eql(pm.collectionVariables.get(\"playbookId\")); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "Deletes the playbook and all of its response actions in one transaction."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve deleted playbook (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "The deleted playbook no longer exists."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Delete already-deleted playbook (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{playbookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{playbookId}}"
+              ]
+            },
+            "description": "Deleting a missing playbook returns 404."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Delete Phishing playbook (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{playbooksBaseUrl}}/playbooks/{{secondPlaybookId}}",
+              "host": [
+                "{{playbooksBaseUrl}}"
+              ],
+              "path": [
+                "playbooks",
+                "{{secondPlaybookId}}"
+              ]
+            },
+            "description": "Cleans up the second playbook so the collection can be run again."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "usersBaseUrl",
+      "value": "http://127.0.0.1:5001",
+      "type": "string"
+    },
+    {
+      "key": "playbooksBaseUrl",
+      "value": "http://127.0.0.1:5009",
+      "type": "string"
+    },
+    {
+      "key": "adminUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeePassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "playbookId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "secondPlaybookId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "actionId1",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "actionId2",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "actionId3",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "actionId4",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "secondActionId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

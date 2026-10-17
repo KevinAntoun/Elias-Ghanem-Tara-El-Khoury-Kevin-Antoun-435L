@@ -1,1 +1,1 @@
-"""Response playbooks and actions service (student C)."""
+"""Response playbooks and actions service (Elias Ghanem)."""
