@@ -1,0 +1,2472 @@
+{
+  "info": {
+    "name": "Service 8 - Notification and Alert Management (Elias Ghanem)",
+    "description": "Postman requests for the six Notification and Alert Management APIs, implemented by Elias Ghanem. Run the users (5001) and notifications (5008) services, fill in the username/password collection variables for one active account per role (ADMIN, ANALYST, AUDITOR, EMPLOYEE), then run the folders in order. The setup folder logs in each role; tokens, user IDs and notification IDs are saved automatically in collection variables. Run it on a database where these four users have no other notifications so the count checks hold.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Setup (login)",
+      "item": [
+        {
+          "name": "Setup - Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"adminToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"adminUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in adminToken and the account ID in adminUserId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Login as Analyst",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"analystToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"analystUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in analystToken and the account ID in analystUserId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{analystUsername}}\",\n  \"password\": \"{{analystPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Login as Auditor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"auditorToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"auditorUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in auditorToken and the account ID in auditorUserId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{auditorUsername}}\",\n  \"password\": \"{{auditorPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Login as Employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"employeeToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"employeeUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in employeeToken and the account ID in employeeUserId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{employeeUsername}}\",\n  \"password\": \"{{employeePassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. Create Notification - POST /notifications",
+      "item": [
+        {
+          "name": "Elias Ghanem - Create Incident Assignment notification for Analyst",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Starts Unread with no read date\", function () {",
+                  "    pm.expect(pm.response.json().notification.status).to.eql(\"Unread\");",
+                  "    pm.expect(pm.response.json().notification.read_at).to.eql(null);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"notificationId\", pm.response.json().notification.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "Admin notifies the analyst of an incident assignment. Status always starts as Unread and read_at as null; the Location header points at the new record.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{analystUserId}},\n  \"title\": \"Incident INC-2026-014 assigned to you\",\n  \"message\": \"You are now the lead analyst for the phishing incident reported by HR.\",\n  \"notification_type\": \"Incident Assignment\",\n  \"severity\": \"High\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Create Security Alert for Employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"secondNotificationId\", pm.response.json().notification.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "Admin sends a personal security alert to the employee.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{employeeUserId}},\n  \"title\": \"Suspicious sign-in detected\",\n  \"message\": \"A sign-in to your account was blocked from an unrecognized location.\",\n  \"notification_type\": \"Security Alert\",\n  \"severity\": \"Medium\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Create Vulnerability Alert for Employee (Critical)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"thirdNotificationId\", pm.response.json().notification.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "Critical vulnerability alert for the employee. Used later for the delete demo.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{employeeUserId}},\n  \"title\": \"Critical patch required on your laptop\",\n  \"message\": \"CVE-2024-3094 affects a package on your workstation. Install the update today.\",\n  \"notification_type\": \"Vulnerability Alert\",\n  \"severity\": \"Critical\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Create Threat Alert for Analyst",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"fourthNotificationId\", pm.response.json().notification.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "High-severity threat alert for the analyst. Used by the search examples.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{analystUserId}},\n  \"title\": \"New ransomware indicators\",\n  \"message\": \"Threat intelligence reports new LockBit indicators targeting our sector.\",\n  \"notification_type\": \"Threat Alert\",\n  \"severity\": \"High\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Invalid notification type (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "notification_type must be one of the five supported types.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{analystUserId}},\n  \"title\": \"Reminder\",\n  \"message\": \"Weekly reminder.\",\n  \"notification_type\": \"Reminder\",\n  \"severity\": \"Low\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Invalid severity (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "severity must be Low, Medium, High or Critical.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{analystUserId}},\n  \"title\": \"Alert\",\n  \"message\": \"Alert message.\",\n  \"notification_type\": \"Security Alert\",\n  \"severity\": \"Extreme\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing required fields (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "user_id, title, message, notification_type and severity are all required.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Incomplete notification\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Server-managed status field (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "status and read_at are set by the server and cannot be supplied.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{analystUserId}},\n  \"title\": \"Alert\",\n  \"message\": \"Alert message.\",\n  \"notification_type\": \"Security Alert\",\n  \"severity\": \"Low\",\n  \"status\": \"Read\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unknown recipient user (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "user_id must reference an existing active user.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 999999,\n  \"title\": \"Alert\",\n  \"message\": \"Alert message.\",\n  \"notification_type\": \"System Notification\",\n  \"severity\": \"Low\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Analyst cannot create (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "Only ADMIN can create notifications.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{analystUserId}},\n  \"title\": \"Alert\",\n  \"message\": \"Alert message.\",\n  \"notification_type\": \"Security Alert\",\n  \"severity\": \"Low\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee cannot create (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "Only ADMIN can create notifications.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{employeeUserId}},\n  \"title\": \"Alert\",\n  \"message\": \"Alert message.\",\n  \"notification_type\": \"Security Alert\",\n  \"severity\": \"Low\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "Every notification endpoint requires a Bearer token.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{analystUserId}},\n  \"title\": \"Alert\",\n  \"message\": \"Alert message.\",\n  \"notification_type\": \"Security Alert\",\n  \"severity\": \"Low\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. User Notification History - GET /notifications/user/{user_id}",
+      "item": [
+        {
+          "name": "Elias Ghanem - User notification history (Admin views Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 2 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/user/{{analystUserId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "{{analystUserId}}"
+              ]
+            },
+            "description": "Admin can view any user's notification history, newest first."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - User notification history (Analyst views own assigned notifications)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 2 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/user/{{analystUserId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "{{analystUserId}}"
+              ]
+            },
+            "description": "Analysts can view the notifications assigned to them."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - User notification history (Employee views own personal notifications)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 2 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/user/{{employeeUserId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "{{employeeUserId}}"
+              ]
+            },
+            "description": "Employees can view their personal notifications."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - User notification history (Auditor, read-only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/user/{{employeeUserId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "{{employeeUserId}}"
+              ]
+            },
+            "description": "Auditors can view any user's notification history."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - User with no notifications (empty list)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 0 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(0); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/user/{{auditorUserId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "{{auditorUserId}}"
+              ]
+            },
+            "description": "An existing user with no notifications gets 200 and an empty list."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unknown user (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/user/999999",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "999999"
+              ]
+            },
+            "description": "Returns 404 when the user does not exist."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee views another user's history (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/user/{{analystUserId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "{{analystUserId}}"
+              ]
+            },
+            "description": "Employees may only view their own notifications."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/user/{{analystUserId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "{{analystUserId}}"
+              ]
+            },
+            "description": "Every notification endpoint requires a Bearer token."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Notification Details - GET /notifications/{id}",
+      "item": [
+        {
+          "name": "Elias Ghanem - Retrieve notification details (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{notificationId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{notificationId}}"
+              ]
+            },
+            "description": "Returns the full notification record."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve own notification (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{notificationId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{notificationId}}"
+              ]
+            },
+            "description": "Analysts can view notifications assigned to them."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve notification (Auditor, read-only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{secondNotificationId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{secondNotificationId}}"
+              ]
+            },
+            "description": "Auditors can view any notification."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee views another user's notification (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{notificationId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{notificationId}}"
+              ]
+            },
+            "description": "Employees may only view their own notifications."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve invalid notification ID (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/999999",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "999999"
+              ]
+            },
+            "description": "Returns 404 for an ID that does not exist."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{notificationId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{notificationId}}"
+              ]
+            },
+            "description": "Every notification endpoint requires a Bearer token."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Mark Notification as Read - PUT /notifications/{id}/read",
+      "item": [
+        {
+          "name": "Elias Ghanem - Mark own notification as read (Employee)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Status is Read with a read date\", function () {",
+                  "    pm.expect(pm.response.json().notification.status).to.eql(\"Read\");",
+                  "    pm.expect(pm.response.json().notification.read_at).to.be.a(\"string\");",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"firstReadAt\", pm.response.json().notification.read_at);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{secondNotificationId}}/read",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{secondNotificationId}}",
+                "read"
+              ]
+            },
+            "description": "Sets status to Read and records read_at. No request body is needed."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Mark the same notification again (idempotent)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Original read date is kept\", function () {",
+                  "    pm.expect(pm.response.json().notification.read_at).to.eql(pm.collectionVariables.get(\"firstReadAt\"));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{secondNotificationId}}/read",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{secondNotificationId}}",
+                "read"
+              ]
+            },
+            "description": "Marking an already-read notification returns 200 and keeps the original read date."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Mark assigned notification as read (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{notificationId}}/read",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{notificationId}}",
+                "read"
+              ]
+            },
+            "description": "Analysts can mark notifications assigned to them."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Analyst marks another user's notification (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{thirdNotificationId}}/read",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{thirdNotificationId}}",
+                "read"
+              ]
+            },
+            "description": "Analysts may only mark their own notifications."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Auditor cannot mark as read (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{fourthNotificationId}}/read",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{fourthNotificationId}}",
+                "read"
+              ]
+            },
+            "description": "Auditors have read-only access."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Mark invalid notification ID (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/999999/read",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "999999",
+                "read"
+              ]
+            },
+            "description": "Returns 404 for an ID that does not exist."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{notificationId}}/read",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{notificationId}}",
+                "read"
+              ]
+            },
+            "description": "Every notification endpoint requires a Bearer token."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Search Notifications - GET /notifications/search",
+      "item": [
+        {
+          "name": "Elias Ghanem - Search by notification type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 1 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(1); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?notification_type=Threat%20Alert",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "notification_type",
+                  "value": "Threat%20Alert"
+                }
+              ]
+            },
+            "description": "Exact match on notification_type."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search by severity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 2 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?severity=High",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "High"
+                }
+              ]
+            },
+            "description": "Exact match on severity."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search by status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 2 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?status=Read",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Read"
+                }
+              ]
+            },
+            "description": "Exact match on status (Unread or Read)."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search by user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 2 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?user_id={{employeeUserId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "{{employeeUserId}}"
+                }
+              ]
+            },
+            "description": "All notifications for one user."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search with combined filters",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 1 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(1); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?user_id={{employeeUserId}}&severity=Critical&status=Unread",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "{{employeeUserId}}"
+                },
+                {
+                  "key": "severity",
+                  "value": "Critical"
+                },
+                {
+                  "key": "status",
+                  "value": "Unread"
+                }
+              ]
+            },
+            "description": "Filters are combined with AND."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search with no results",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 0 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(0); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?notification_type=System%20Notification",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "notification_type",
+                  "value": "System%20Notification"
+                }
+              ]
+            },
+            "description": "No matches returns 200 with an empty list."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search all notifications (Auditor, read-only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 2 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?status=Unread",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Unread"
+                }
+              ]
+            },
+            "description": "Auditors can search every notification."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search limited to own notifications (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns 2 notification(s)\", function () { pm.expect(pm.response.json().count).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?severity=High",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "High"
+                }
+              ]
+            },
+            "description": "An analyst's search only returns their own notifications."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Analyst searches another user (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?user_id={{employeeUserId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "{{employeeUserId}}"
+                }
+              ]
+            },
+            "description": "Analysts cannot search other users' notifications."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Invalid search filter value (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?severity=Extreme",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "Extreme"
+                }
+              ]
+            },
+            "description": "Filter values are validated against an allowlist."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unsupported search filter (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?title=Alert",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "Alert"
+                }
+              ]
+            },
+            "description": "Only user_id, notification_type, severity and status are accepted."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Duplicate search filter (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?severity=High&severity=Low",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "High"
+                },
+                {
+                  "key": "severity",
+                  "value": "Low"
+                }
+              ]
+            },
+            "description": "Each filter may be given only once."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search without filters (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ]
+            },
+            "description": "At least one filter is required."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee cannot search (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?severity=High",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "High"
+                }
+              ]
+            },
+            "description": "Employees cannot use the search endpoint."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/search?severity=High",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "High"
+                }
+              ]
+            },
+            "description": "Every notification endpoint requires a Bearer token."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Delete Notification - DELETE /notifications/{id}",
+      "item": [
+        {
+          "name": "Elias Ghanem - Unauthorized - Analyst cannot delete (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{thirdNotificationId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{thirdNotificationId}}"
+              ]
+            },
+            "description": "Only ADMIN can delete notifications."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee cannot delete own notification (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{thirdNotificationId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{thirdNotificationId}}"
+              ]
+            },
+            "description": "Only ADMIN can delete notifications, even the recipient cannot."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{thirdNotificationId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{thirdNotificationId}}"
+              ]
+            },
+            "description": "Every notification endpoint requires a Bearer token."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Delete Notification (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{thirdNotificationId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{thirdNotificationId}}"
+              ]
+            },
+            "description": "Admin deletes the notification; the response includes deleted_id."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Delete the same notification again (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{notificationsBaseUrl}}/notifications/{{thirdNotificationId}}",
+              "host": [
+                "{{notificationsBaseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{thirdNotificationId}}"
+              ]
+            },
+            "description": "The notification no longer exists."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "usersBaseUrl",
+      "value": "http://127.0.0.1:5001",
+      "type": "string"
+    },
+    {
+      "key": "notificationsBaseUrl",
+      "value": "http://127.0.0.1:5008",
+      "type": "string"
+    },
+    {
+      "key": "adminUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeePassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "notificationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "secondNotificationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "thirdNotificationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "fourthNotificationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "firstReadAt",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

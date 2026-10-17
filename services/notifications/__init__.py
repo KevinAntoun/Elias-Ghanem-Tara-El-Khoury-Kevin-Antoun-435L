@@ -1,1 +1,1 @@
-"""Security notifications service (student C)."""
+"""Security notifications service (Elias Ghanem)."""
