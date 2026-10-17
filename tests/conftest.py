@@ -109,3 +109,4 @@ def incident_id(db, accounts, asset_id):
     )
     db.commit()
     return cur.lastrowid
+
