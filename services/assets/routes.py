@@ -8,10 +8,11 @@ read only assets referenced by incidents assigned to them.
 import ipaddress
 import sqlite3
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 from shared.auth import current_user, require_roles
 from shared.database import get_db
+from shared.reference_client import use_local_references, lookup_user, analyst_asset_ids
 
 bp = Blueprint("assets", __name__, url_prefix="/assets")
 
@@ -92,6 +93,9 @@ def _validate_fields(data, *, creating=False):
 
 
 def _owner_exists(conn, owner_id):
+    if not use_local_references():
+        user = lookup_user(owner_id)
+        return user is not None and user.get("account_status") == "Active"
     return conn.execute(
         "SELECT 1 FROM users WHERE id = ? AND account_status = 'Active'",
         (owner_id,),
@@ -100,6 +104,8 @@ def _owner_exists(conn, owner_id):
 
 def _analyst_can_see(conn, asset_id):
     """An analyst may view assets on incidents assigned to that analyst."""
+    if not use_local_references():
+        return asset_id in analyst_asset_ids(current_user()["id"])
     return conn.execute(
         """SELECT 1 FROM incidents
            WHERE affected_asset_id = ? AND assigned_analyst_id = ?
@@ -154,7 +160,13 @@ def search_assets():
         else:
             conditions.append(f"LOWER(a.{key}) LIKE ?")
             parameters.append("%" + value.lower() + "%")
-    if current_user()["role"] == "ANALYST":
+    if current_user()["role"] == "ANALYST" and not use_local_references():
+        ids = analyst_asset_ids(current_user()["id"])
+        if not ids:
+            return jsonify({"status": "success", "count": 0, "assets": []}), 200
+        conditions.append("a.id IN (" + ",".join("?" for _ in ids) + ")")
+        parameters.extend(ids)
+    elif current_user()["role"] == "ANALYST":
         conditions.append(
             """EXISTS (SELECT 1 FROM incidents i
                WHERE i.affected_asset_id = a.id AND i.assigned_analyst_id = ?)"""

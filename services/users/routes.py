@@ -8,10 +8,10 @@ Authentication is shared through ``shared.auth`` and JWTs.
 import re
 import sqlite3
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, g, jsonify, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from shared.auth import create_access_token, current_user, require_roles
+from shared.auth import ROLES, create_access_token, current_user, require_roles
 from shared.database import get_db
 from dotenv import load_dotenv
 
@@ -213,8 +213,15 @@ def update_user(user_id):
         return _error("A JSON object is required.", 400)
     if not data:
         return _error("Provide at least one editable profile field.", 400)
-    if set(data) - _ALLOWED_PROFILE_FIELDS:
-        return _error("Only full_name, email and department may be updated.", 400)
+    # Roles and account state can be changed only by an authenticated ADMIN.
+    admin_fields = {"role", "account_status"} if actor["role"] == "ADMIN" else set()
+    allowed = _ALLOWED_PROFILE_FIELDS | admin_fields
+    if set(data) - allowed:
+        return _error("Fields are not editable by this account.", 400)
+    if "role" in data and (not isinstance(data["role"], str) or data["role"] not in ROLES):
+        return _error("Invalid role.", 400)
+    if "account_status" in data and (not isinstance(data["account_status"], str) or data["account_status"] not in {"Active", "Inactive", "Suspended"}):
+        return _error("Invalid account_status.", 400)
 
     updates = {}
     for field, value in data.items():
@@ -228,9 +235,24 @@ def update_user(user_id):
 
     conn = get_db()
     try:
-        exists = conn.execute("SELECT id FROM users WHERE id = ?", (user_id,)).fetchone()
-        if exists is None:
+        # Lock first so concurrent requests cannot demote the last active admin.
+        conn.execute("BEGIN IMMEDIATE")
+        existing = conn.execute(
+            "SELECT id, role, account_status FROM users WHERE id = ?", (user_id,)
+        ).fetchone()
+        if existing is None:
+            conn.rollback()
             return _error("User not found.", 404)
+        losing_admin = (existing["role"] == "ADMIN" and existing["account_status"] == "Active"
+                        and (updates.get("role", existing["role"]) != "ADMIN"
+                             or updates.get("account_status", existing["account_status"]) != "Active"))
+        if losing_admin:
+            remaining = conn.execute(
+                "SELECT COUNT(*) FROM users WHERE role = 'ADMIN' AND account_status = 'Active'"
+            ).fetchone()[0]
+            if remaining <= 1:
+                conn.rollback()
+                return _error("Cannot deactivate or demote the last active administrator.", 409)
         # Column identifiers come exclusively from a fixed server-side allowlist.
         clause = ", ".join(f"{field} = ?" for field in updates)
         conn.execute(f"UPDATE users SET {clause} WHERE id = ?", (*updates.values(), user_id))
@@ -244,6 +266,12 @@ def update_user(user_id):
     except sqlite3.DatabaseError:
         conn.rollback()
         return _error("Database unavailable.", 503)
+    if "role" in updates and updates["role"] != existing["role"]:
+        g.audit_action_override = ("ROLE_CHANGED", "Warning")
+        g.audit_description_override = f"Administrator changed user #{user_id} role from {existing['role']} to {updates['role']}."
+    elif "account_status" in updates and updates["account_status"] != existing["account_status"]:
+        g.audit_action_override = ("ACCOUNT_STATUS_CHANGED", "Warning")
+        g.audit_description_override = f"Administrator changed user #{user_id} account status."
     return jsonify({"status": "success", "message": "User updated.", "user": _safe_user(row)}), 200
 
 

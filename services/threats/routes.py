@@ -18,6 +18,7 @@ from flask import Blueprint, jsonify, request
 
 from shared.auth import require_roles
 from shared.database import get_db
+from shared.notification_events import send_critical_security_alert
 
 
 bp = Blueprint("threats", __name__, url_prefix="/threats")
@@ -174,6 +175,7 @@ def create_threat():
     except sqlite3.DatabaseError:
         return _error("Unable to create threat.", 500)
 
+    send_critical_security_alert("threats", threat["id"], threat["severity"])
     response = jsonify({
         "status": "success",
         "message": "Threat created successfully.",
@@ -306,6 +308,9 @@ def update_threat(threat_id):
         assignments = ", ".join(f"{column} = ?" for column in updated)
         params = list(updated.values()) + [threat_id]
         db = get_db()
+        old = db.execute(
+            "SELECT severity FROM threats WHERE id = ?", (threat_id,)
+        ).fetchone()
         cursor = db.execute(
             f"UPDATE threats SET {assignments} WHERE id = ?",
             params,
@@ -322,6 +327,8 @@ def update_threat(threat_id):
         get_db().rollback()
         return _error("Unable to update threat.", 500)
 
+    if old is not None and old["severity"] != "Critical" and row["severity"] == "Critical":
+        send_critical_security_alert("threats", threat_id, "Critical")
     return jsonify({
         "status": "success",
         "message": "Threat updated successfully.",

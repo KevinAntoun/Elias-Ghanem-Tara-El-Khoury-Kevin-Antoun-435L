@@ -28,18 +28,20 @@ Validation rules:
 - Status always starts as Unread with no read date. Marking a notification
   as read records the read date once; repeating the request keeps it.
 
-Integration still required: authenticated HTTP audit events and automatic
-notification generation by the incident, threat and vulnerability services.
+Internal creation: valid NOTIFICATION_TOKEN_* credentials for incidents,
+threats, and vulnerabilities; ordinary employees still cannot create alerts.
 """
 
 import re
 import sqlite3
 from datetime import datetime, timezone
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 from shared.auth import current_user, require_roles
+from shared.internal_auth import require_admin_or_notification_service
 from shared.database import get_db
+from shared.reference_client import use_local_references, lookup_user
 
 bp = Blueprint("notifications", __name__, url_prefix="/notifications")
 
@@ -156,9 +158,9 @@ def insert_notification(db, data):
     """Validate the body, check the recipient and insert an Unread notification."""
     notification = validate_new_notification(data)
 
-    recipient = db.execute(
+    recipient = (db.execute(
         "SELECT account_status FROM users WHERE id = ?", (notification["user_id"],)
-    ).fetchone()
+    ).fetchone() if use_local_references() else lookup_user(notification["user_id"]))
     if recipient is None or recipient["account_status"] != "Active":
         raise ValueError("user_id does not identify an existing active user.")
 
@@ -177,9 +179,9 @@ def insert_notification(db, data):
 
 
 @bp.post("")
-@require_roles("ADMIN")
+@require_admin_or_notification_service
 def create_notification():
-    """POST /notifications: send a notification to a user (ADMIN only).
+    """POST /notifications: send as ADMIN or trusted notification producer.
 
     Author: Elias Ghanem.
 
@@ -220,7 +222,9 @@ def list_user_notifications(user_id):
 
     db = get_db()
     try:
-        if db.execute("SELECT 1 FROM users WHERE id = ?", (user_id,)).fetchone() is None:
+        exists = (db.execute("SELECT 1 FROM users WHERE id = ?", (user_id,)).fetchone()
+                  if use_local_references() else lookup_user(user_id))
+        if exists is None:
             return _error("User not found.", 404)
         rows = db.execute(
             SELECT_SQL + " WHERE user_id = ?" + NEWEST_FIRST, (user_id,)

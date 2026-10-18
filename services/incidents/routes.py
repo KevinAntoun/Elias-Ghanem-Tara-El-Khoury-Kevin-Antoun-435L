@@ -6,16 +6,18 @@ Routes: POST /incidents, GET /incidents, GET /incidents/<id>,
 PUT /incidents/<id>/assign, PUT /incidents/<id>/status,
 POST /incidents/<id>/notes.
 
-Integration still required: authenticated HTTP notifications and audit events.
+Notifications and audit logging are connected through shared authenticated helpers.
 """
 
 import sqlite3
 from datetime import datetime, timezone
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 from shared.auth import current_user, require_roles
 from shared.database import get_db
+from shared.reference_client import use_local_references, lookup_user, lookup_asset
+from shared.notification_events import send_notification_event
 
 bp = Blueprint("incidents", __name__, url_prefix="/incidents")
 
@@ -95,10 +97,15 @@ def create_incident():
 
     conn = get_db()
     try:
-        asset = conn.execute("SELECT id FROM assets WHERE id = ?", (asset_id,)).fetchone()
-        reporter = conn.execute(
-            "SELECT id FROM users WHERE id = ? AND account_status = 'Active'", (reporter_id,)
-        ).fetchone()
+        if use_local_references():
+            asset = conn.execute("SELECT id FROM assets WHERE id = ?", (asset_id,)).fetchone()
+            reporter = conn.execute(
+                "SELECT id FROM users WHERE id = ? AND account_status = 'Active'", (reporter_id,)
+            ).fetchone()
+        else:
+            asset = lookup_asset(asset_id)
+            user = lookup_user(reporter_id)
+            reporter = user if user and user.get("account_status") == "Active" else None
         if asset is None:
             return _error("Affected asset does not exist.", 400)
         if reporter is None:
@@ -157,7 +164,7 @@ def get_incident(incident_id):
 def assign_incident(incident_id):
     """Assign an active analyst to an existing incident (200).
 
-    Notification and audit HTTP integration are still required.
+    Calls Notifications over HTTP after a successful changed assignment.
     """
     data = _body()
     if data is None or set(data) != {"assigned_analyst_id"}:
@@ -172,10 +179,14 @@ def assign_incident(incident_id):
             return _error("Incident not found.", 404)
         if row["status"] == "Closed":
             return _error("A closed incident cannot be assigned.", 409)
-        analyst = conn.execute(
-            "SELECT id FROM users WHERE id = ? AND role = 'ANALYST' AND account_status = 'Active'",
-            (analyst_id,),
-        ).fetchone()
+        if use_local_references():
+            analyst = conn.execute(
+                "SELECT id FROM users WHERE id = ? AND role = 'ANALYST' AND account_status = 'Active'",
+                (analyst_id,),
+            ).fetchone()
+        else:
+            user = lookup_user(analyst_id)
+            analyst = user if user and user.get("role") == "ANALYST" and user.get("account_status") == "Active" else None
         if analyst is None:
             return _error("Assignee must be an active ANALYST.", 400)
         conn.execute(
@@ -184,9 +195,17 @@ def assign_incident(incident_id):
         )
         conn.commit()
         result = dict(_incident(conn, incident_id))
+        changed_assignment = row["assigned_analyst_id"] != analyst_id
     except sqlite3.DatabaseError:
         conn.rollback()
         return _error("Database unavailable.", 503)
+    if changed_assignment:
+        send_notification_event(
+            "incidents", analyst_id,
+            f"Incident #{incident_id} assigned to you",
+            f"You have been assigned incident #{incident_id} for investigation.",
+            "Incident Assignment", result["severity"],
+        )
     return jsonify({"status": "success", "incident": result}), 200
 
 
