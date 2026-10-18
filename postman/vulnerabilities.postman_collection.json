@@ -1,0 +1,2074 @@
+{
+  "info": {
+    "name": "Service 7 - Vulnerability Management (Elias Ghanem)",
+    "description": "Postman requests for the six Vulnerability Management APIs, implemented by Elias Ghanem. Run the users (5001), assets (5002) and vulnerabilities (5007) services, fill in the username/password collection variables for one active account per role (ADMIN, ANALYST, AUDITOR, EMPLOYEE), then run the folders in order. The setup folder logs in and creates two assets; tokens and IDs are saved automatically in collection variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Setup (login and assets)",
+      "item": [
+        {
+          "name": "Setup - Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"adminToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"adminUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in the adminToken collection variable.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Login as Analyst",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"analystToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"analystUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in the analystToken collection variable.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{analystUsername}}\",\n  \"password\": \"{{analystPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Login as Auditor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"auditorToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"auditorUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in the auditorToken collection variable.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{auditorUsername}}\",\n  \"password\": \"{{auditorPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Login as Employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"employeeToken\", pm.response.json().access_token);",
+                  "    pm.collectionVariables.set(\"employeeUserId\", pm.response.json().user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{usersBaseUrl}}/users/login",
+              "host": [
+                "{{usersBaseUrl}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            },
+            "description": "Users service login (setup only). Stores the JWT in the employeeToken collection variable.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{employeeUsername}}\",\n  \"password\": \"{{employeePassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Create asset web-server-01 (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"assetId\", pm.response.json().asset.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{assetsBaseUrl}}/assets",
+              "host": [
+                "{{assetsBaseUrl}}"
+              ],
+              "path": [
+                "assets"
+              ]
+            },
+            "description": "Assets service (setup only): every vulnerability must reference an existing affected asset.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"web-server-01\",\n  \"asset_type\": \"Server\",\n  \"ip_address\": \"10.0.0.10\",\n  \"department\": \"IT\",\n  \"owner_id\": {{adminUserId}},\n  \"criticality\": \"Critical\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup - Create asset hr-laptop-07 (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"secondAssetId\", pm.response.json().asset.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{assetsBaseUrl}}/assets",
+              "host": [
+                "{{assetsBaseUrl}}"
+              ],
+              "path": [
+                "assets"
+              ]
+            },
+            "description": "Assets service (setup only): every vulnerability must reference an existing affected asset.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"hr-laptop-07\",\n  \"asset_type\": \"Workstation\",\n  \"ip_address\": \"10.0.1.27\",\n  \"department\": \"IT\",\n  \"owner_id\": {{adminUserId}},\n  \"criticality\": \"Medium\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. Add New Vulnerability - POST /vulnerabilities",
+      "item": [
+        {
+          "name": "Elias Ghanem - Add New Vulnerability (XZ Utils, Critical)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"vulnerabilityId\", pm.response.json().vulnerability.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "Admin creates a vulnerability. Status always starts as Open; severity must match the CVSS v3.x rating of the score.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"XZ Utils backdoor\",\n  \"description\": \"Malicious code in liblzma 5.6.0/5.6.1 allows remote access through sshd.\",\n  \"cve_identifier\": \"CVE-2024-3094\",\n  \"cvss_score\": 10.0,\n  \"severity\": \"Critical\",\n  \"affected_asset_id\": {{assetId}},\n  \"discovery_source\": \"Vulnerability Scan\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Add New Vulnerability (Log4Shell, Critical)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"secondVulnerabilityId\", pm.response.json().vulnerability.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "Second record on a different asset, used for search and invalid-update demos.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Log4Shell remote code execution\",\n  \"description\": \"Apache Log4j2 JNDI lookups allow remote code execution.\",\n  \"cve_identifier\": \"CVE-2021-44228\",\n  \"cvss_score\": 10.0,\n  \"severity\": \"Critical\",\n  \"affected_asset_id\": {{secondAssetId}},\n  \"discovery_source\": \"Vendor Advisory\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Add New Vulnerability (libwebp, High)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"thirdVulnerabilityId\", pm.response.json().vulnerability.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "Lower-case CVE input is normalized to CVE-2023-4863. Used later for the delete demo.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"libwebp heap buffer overflow\",\n  \"description\": \"Crafted WebP images trigger a heap overflow in libwebp.\",\n  \"cve_identifier\": \"cve-2023-4863\",\n  \"cvss_score\": 8.8,\n  \"severity\": \"High\",\n  \"affected_asset_id\": {{assetId}},\n  \"discovery_source\": \"Penetration Test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Duplicate CVE on same asset (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "A CVE can only be tracked once per asset until that record is Closed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"XZ Utils backdoor (again)\",\n  \"description\": \"Duplicate report.\",\n  \"cve_identifier\": \"CVE-2024-3094\",\n  \"cvss_score\": 10.0,\n  \"severity\": \"Critical\",\n  \"affected_asset_id\": {{assetId}},\n  \"discovery_source\": \"Bug Bounty\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Severity does not match CVSS score (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "CVSS 8.1 is rated High, so severity Medium is rejected with a validation error.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"OpenSSH regreSSHion\",\n  \"description\": \"Signal handler race in sshd.\",\n  \"cve_identifier\": \"CVE-2024-6387\",\n  \"cvss_score\": 8.1,\n  \"severity\": \"Medium\",\n  \"affected_asset_id\": {{assetId}},\n  \"discovery_source\": \"Vulnerability Scan\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Invalid CVE format (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "cve_identifier must have the format CVE-YYYY-NNNN.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Bad CVE\",\n  \"description\": \"Invalid identifier.\",\n  \"cve_identifier\": \"CVE-24-1\",\n  \"cvss_score\": 5.0,\n  \"severity\": \"Medium\",\n  \"affected_asset_id\": {{assetId}},\n  \"discovery_source\": \"Manual Review\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing required fields (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "Every required field is listed in the error message.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Incomplete record\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unknown affected asset (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "Each vulnerability must be associated with one existing asset.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Orphan\",\n  \"description\": \"Asset does not exist.\",\n  \"cve_identifier\": \"CVE-2022-0001\",\n  \"cvss_score\": 4.0,\n  \"severity\": \"Medium\",\n  \"affected_asset_id\": 999999,\n  \"discovery_source\": \"Manual Review\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Analyst cannot create (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "Only the Security Administrator can add vulnerabilities.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Analyst attempt\",\n  \"description\": \"Not allowed.\",\n  \"cve_identifier\": \"CVE-2022-0002\",\n  \"cvss_score\": 4.0,\n  \"severity\": \"Medium\",\n  \"affected_asset_id\": {{assetId}},\n  \"discovery_source\": \"Manual Review\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Missing token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "Every vulnerability endpoint requires a Bearer token.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"No token\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Retrieve All Vulnerabilities - GET /vulnerabilities",
+      "item": [
+        {
+          "name": "Elias Ghanem - Retrieve All Vulnerabilities (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "Newest first; each record includes severity, status and affected asset details."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve All Vulnerabilities (Auditor, read-only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "Auditors have read-only access."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee cannot list (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities"
+              ]
+            },
+            "description": "Regular employees have no access to vulnerability APIs."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Retrieve Specific Vulnerability - GET /vulnerabilities/{id}",
+      "item": [
+        {
+          "name": "Elias Ghanem - Retrieve Specific Vulnerability (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{vulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{vulnerabilityId}}"
+              ]
+            },
+            "description": "Returns the complete vulnerability record."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Retrieve invalid vulnerability ID (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/999999",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "999999"
+              ]
+            },
+            "description": "Unknown IDs return a JSON 404 error."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Update Vulnerability - PUT /vulnerabilities/{id}",
+      "item": [
+        {
+          "name": "Elias Ghanem - Update description, CVSS and severity (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{vulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{vulnerabilityId}}"
+              ]
+            },
+            "description": "Analysts may update description, severity, status, cvss_score and resolution_date.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Confirmed on web-server-01; sshd links the affected liblzma.\",\n  \"cvss_score\": 9.6,\n  \"severity\": \"Critical\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Status Open -> Under Investigation (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{vulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{vulnerabilityId}}"
+              ]
+            },
+            "description": "Status advances exactly one lifecycle stage.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Under Investigation\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Status Under Investigation -> In Progress (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{vulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{vulnerabilityId}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Status In Progress -> Resolved (Analyst)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{vulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{vulnerabilityId}}"
+              ]
+            },
+            "description": "The resolution date is recorded automatically when no resolution_date is supplied.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Resolved\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Status Resolved -> Closed (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{vulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{vulnerabilityId}}"
+              ]
+            },
+            "description": "Closed is the final, read-only stage.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Closed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Modify a closed vulnerability (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{vulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{vulnerabilityId}}"
+              ]
+            },
+            "description": "Closed records cannot be modified.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Late change\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Invalid transition Open -> Closed (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{secondVulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{secondVulnerabilityId}}"
+              ]
+            },
+            "description": "Skipping lifecycle stages is rejected; the error names the next allowed status.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Closed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - CVSS change without matching severity (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{secondVulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{secondVulnerabilityId}}"
+              ]
+            },
+            "description": "CVSS 5.0 is Medium but the record is Critical, so severity must be updated too.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cvss_score\": 5.0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Resolution date on an unresolved vulnerability (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{secondVulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{secondVulnerabilityId}}"
+              ]
+            },
+            "description": "resolution_date can only be set when the status is Resolved or Closed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resolution_date\": \"2026-10-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Non-editable field (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{secondVulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{secondVulnerabilityId}}"
+              ]
+            },
+            "description": "Title, CVE, affected asset and discovery source cannot be changed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cve_identifier\": \"CVE-2020-0001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Auditor cannot update (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{secondVulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{secondVulnerabilityId}}"
+              ]
+            },
+            "description": "Auditors are read-only.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Under Investigation\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Search Vulnerabilities - GET /vulnerabilities/search",
+      "item": [
+        {
+          "name": "Elias Ghanem - Search by CVE identifier (partial)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/search?cve_identifier=CVE-2021",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "cve_identifier",
+                  "value": "CVE-2021"
+                }
+              ]
+            },
+            "description": "Case-insensitive partial match on the CVE identifier."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search by severity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auditorToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/search?severity=Critical",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "Critical"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search by asset",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/search?affected_asset_id={{assetId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "affected_asset_id",
+                  "value": "{{assetId}}"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search by status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/search?status=Open",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Open"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search with combined filters",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/search?severity=High&status=Open&affected_asset_id={{assetId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "High"
+                },
+                {
+                  "key": "status",
+                  "value": "Open"
+                },
+                {
+                  "key": "affected_asset_id",
+                  "value": "{{assetId}}"
+                }
+              ]
+            },
+            "description": "Filters are combined with AND."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Search with no results",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/search?severity=Low",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "Low"
+                }
+              ]
+            },
+            "description": "Returns 200 with an empty list."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Invalid search filter (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/search?severity=Extreme",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "Extreme"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Unauthorized - Employee cannot search (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{employeeToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/search?severity=High",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "severity",
+                  "value": "High"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Delete Vulnerability - DELETE /vulnerabilities/{id}",
+      "item": [
+        {
+          "name": "Elias Ghanem - Unauthorized - Analyst cannot delete (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{analystToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{thirdVulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{thirdVulnerabilityId}}"
+              ]
+            },
+            "description": "Only administrators may delete vulnerability records."
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Delete Vulnerability (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{thirdVulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{thirdVulnerabilityId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Elias Ghanem - Delete the same vulnerability again (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{vulnerabilitiesBaseUrl}}/vulnerabilities/{{thirdVulnerabilityId}}",
+              "host": [
+                "{{vulnerabilitiesBaseUrl}}"
+              ],
+              "path": [
+                "vulnerabilities",
+                "{{thirdVulnerabilityId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "usersBaseUrl",
+      "value": "http://127.0.0.1:5001",
+      "type": "string"
+    },
+    {
+      "key": "assetsBaseUrl",
+      "value": "http://127.0.0.1:5002",
+      "type": "string"
+    },
+    {
+      "key": "vulnerabilitiesBaseUrl",
+      "value": "http://127.0.0.1:5007",
+      "type": "string"
+    },
+    {
+      "key": "adminUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "analystUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditorUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeePassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "assetId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "secondAssetId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "vulnerabilityId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "secondVulnerabilityId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "thirdVulnerabilityId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

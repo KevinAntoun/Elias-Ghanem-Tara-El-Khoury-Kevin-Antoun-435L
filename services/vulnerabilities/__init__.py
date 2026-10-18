@@ -1,1 +1,1 @@
-"""Vulnerabilities and remediation service (student B)."""
+"""Vulnerabilities and remediation service (Elias Ghanem)."""
