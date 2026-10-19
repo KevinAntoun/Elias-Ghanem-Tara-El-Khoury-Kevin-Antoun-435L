@@ -18,6 +18,7 @@ from shared.internal_auth import (
     require_admin_or_service,
 )
 from shared.database import get_db
+from shared.reference_client import lookup_user, use_local_references
 
 bp = Blueprint("audit", __name__, url_prefix="/logs")
 
@@ -97,7 +98,13 @@ def insert_log(db, data, actor_user_id, *, internal_service=None):
     elif actor_user_id is not None:
         if type(actor_user_id) is not int or actor_user_id <= 0:
             raise ValueError("user_id must be a positive integer or null.")
-        if db.execute("SELECT id FROM users WHERE id = ?", (actor_user_id,)).fetchone() is None:
+        if use_local_references():
+            actor_exists = db.execute(
+                "SELECT id FROM users WHERE id = ?", (actor_user_id,)
+            ).fetchone() is not None
+        else:
+            actor_exists = lookup_user(actor_user_id) is not None
+        if not actor_exists:
             raise ValueError("user_id does not exist.")
 
     try:

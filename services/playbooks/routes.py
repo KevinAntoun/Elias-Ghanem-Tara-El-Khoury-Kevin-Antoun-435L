@@ -37,10 +37,11 @@ notifications for action assignment and completion.
 import sqlite3
 from datetime import datetime, timezone
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 from shared.auth import current_user, require_roles
 from shared.database import get_db
+from shared.reference_client import use_local_references, lookup_user
 
 bp = Blueprint("playbooks", __name__, url_prefix="/playbooks")
 
@@ -217,9 +218,9 @@ def _check_assignee(db, user_id):
     """Require the assignee to be an active ADMIN or ANALYST account."""
     if user_id is None:
         return
-    row = db.execute(
+    row = (db.execute(
         "SELECT role, account_status FROM users WHERE id = ?", (user_id,)
-    ).fetchone()
+    ).fetchone() if use_local_references() else lookup_user(user_id))
     if row is None:
         raise ValueError("assigned_user_id does not identify an existing user.")
     if row["account_status"] != "Active" or row["role"] not in ASSIGNABLE_ROLES:

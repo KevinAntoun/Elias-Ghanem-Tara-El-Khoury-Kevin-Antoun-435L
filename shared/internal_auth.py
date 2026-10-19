@@ -1,11 +1,13 @@
-"""Authentication for trusted service-to-service Audit requests.
+"""Authenticate trusted machine callers separately from human JWT users.
 
-Keeps machine credentials separate from user JWTs. An internal service sends
-Authorization: Service <secret> and X-Service-Name: <name>. The header naming
-the service is never trusted without a matching configured secret.
+Each destination service uses its own per-producer credentials:
+- AUDIT_TOKEN_<SERVICE> protects POST /logs
+- NOTIFICATION_TOKEN_<SERVICE> protects POST /notifications
 
-Configure a different high-entropy AUDIT_TOKEN_<SERVICE> secret for each
-trusted producer on the Audit service. Do not expose these tokens to clients.
+Clients must present ``Authorization: Service <secret>`` and the verified
+``X-Service-Name``. Mere possession of a service-name header proves nothing.
+Secrets must be high-entropy, at least 32 characters, and configured on both
+sides. Keep them out of version control. Use TLS outside localhost.
 """
 
 import os
@@ -21,53 +23,64 @@ PRODUCER_SERVICES = frozenset({
     "users", "assets", "incidents", "threats", "vulnerabilities",
     "notifications", "playbooks", "reports",
 })
+NOTIFICATION_PRODUCERS = frozenset({"incidents", "threats", "vulnerabilities"})
 
 
 def current_internal_service():
-    """Name of the authenticated producer, or None for a user request."""
+    """Verified producer name for the Audit service, if any."""
     return getattr(g, "audit_internal_service", None)
 
 
-def require_admin_or_service(view_function):
-    """Authorize an ADMIN JWT or a configured internal service credential.
+def current_notification_service():
+    """Verified producer name for the Notification service, if any."""
+    return getattr(g, "notification_internal_service", None)
 
-    ADMIN identities are checked using the existing shared JWT decorator.
-    Internal callers must provide a separately provisioned 32+-character
-    secret for a permitted service; absent/misconfigured secrets fail closed.
-    """
+
+def _admin_or_service(view_function, *, producers, secret_prefix, context_key):
+    """Enforce ADMIN JWT or a purpose-scoped and authenticated machine token."""
     admin_view = require_roles("ADMIN")(view_function)
 
     @wraps(view_function)
     def wrapper(*args, **kwargs):
         authorization = request.headers.get("Authorization", "")
         parts = authorization.split()
-
         if parts and parts[0].lower() == "service":
-            if len(parts) != 2:
-                return jsonify({
-                    "status": "error", "message": "Invalid service credentials."
-                }), 401
-
             service = request.headers.get("X-Service-Name", "").strip().lower()
-            if service not in PRODUCER_SERVICES:
+            if len(parts) != 2 or service not in producers:
                 return jsonify({
                     "status": "error", "message": "Invalid service credentials."
                 }), 401
-
-            expected = os.getenv(f"AUDIT_TOKEN_{service.upper()}")
-            provided = parts[1]
+            expected = os.getenv(f"{secret_prefix}_{service.upper()}")
             if (
                 not expected
                 or len(expected) < 32
-                or not secrets.compare_digest(provided, expected)
+                or not secrets.compare_digest(parts[1], expected)
             ):
                 return jsonify({
                     "status": "error", "message": "Invalid service credentials."
                 }), 401
-
-            g.audit_internal_service = service
+            setattr(g, context_key, service)
             return view_function(*args, **kwargs)
-
         return admin_view(*args, **kwargs)
 
     return wrapper
+
+
+def require_admin_or_service(view_function):
+    """Audit writes: ADMIN or an authenticated Audit event producer."""
+    return _admin_or_service(
+        view_function,
+        producers=PRODUCER_SERVICES,
+        secret_prefix="AUDIT_TOKEN",
+        context_key="audit_internal_service",
+    )
+
+
+def require_admin_or_notification_service(view_function):
+    """Notification writes: ADMIN or an approved notification producer."""
+    return _admin_or_service(
+        view_function,
+        producers=NOTIFICATION_PRODUCERS,
+        secret_prefix="NOTIFICATION_TOKEN",
+        context_key="notification_internal_service",
+    )

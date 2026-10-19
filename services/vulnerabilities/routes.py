@@ -32,10 +32,12 @@ import re
 import sqlite3
 from datetime import datetime, timezone
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 from shared.auth import require_roles
 from shared.database import get_db
+from shared.reference_client import use_local_references, lookup_asset
+from shared.notification_events import send_critical_security_alert
 
 bp = Blueprint("vulnerabilities", __name__, url_prefix="/vulnerabilities")
 
@@ -224,9 +226,13 @@ def insert_vulnerability(db, data):
     """Validate, check relationships and insert a vulnerability record."""
     vulnerability = validate_new_vulnerability(data)
 
-    if db.execute(
-        "SELECT 1 FROM assets WHERE id = ?", (vulnerability["affected_asset_id"],)
-    ).fetchone() is None:
+    if use_local_references():
+        exists = db.execute(
+            "SELECT 1 FROM assets WHERE id = ?", (vulnerability["affected_asset_id"],)
+        ).fetchone() is not None
+    else:
+        exists = lookup_asset(vulnerability["affected_asset_id"]) is not None
+    if not exists:
         raise ValueError("affected_asset_id does not identify an existing asset.")
 
     if db.execute(
@@ -347,6 +353,7 @@ def create_vulnerability():
     except sqlite3.DatabaseError:
         return _error("Unable to create vulnerability.", 500)
 
+    send_critical_security_alert("vulnerabilities", vulnerability["id"], vulnerability["severity"])
     response = jsonify({
         "status": "success",
         "message": "Vulnerability created successfully.",
@@ -480,6 +487,7 @@ def update_vulnerability(vulnerability_id):
         row = _fetch(db, vulnerability_id)
         if row is None:
             return _error("Vulnerability not found.", 404)
+        old_severity = row["severity"]
         updates = apply_update_rules(row, changes)
 
         # Every column comes from the fixed UPDATE_FIELDS allowlist.
@@ -498,6 +506,8 @@ def update_vulnerability(vulnerability_id):
         db.rollback()
         return _error("Unable to update vulnerability.", 500)
 
+    if old_severity != "Critical" and row["severity"] == "Critical":
+        send_critical_security_alert("vulnerabilities", vulnerability_id, "Critical")
     return jsonify({
         "status": "success",
         "message": "Vulnerability updated successfully.",
