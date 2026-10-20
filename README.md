@@ -1,92 +1,85 @@
 # Security Incident Detection and Response Management System
 
-**Software Tools Lab — Sprint 1 | Backend Project**
+**Software Tools Lab (435L) — Sprint 1 | Python / Flask Backend**
 
 **Team:** Tara El Khoury · Elias Ghanem · Kevin Antoun
 
+[**API Documentation (GitHub Pages)**](https://kevinantoun.github.io/Elias-Ghanem-Tara-El-Khoury-Kevin-Antoun-435L/) · [**Source Code**](https://github.com/KevinAntoun/Elias-Ghanem-Tara-El-Khoury-Kevin-Antoun-435L) · [**GitHub Actions**](https://github.com/KevinAntoun/Elias-Ghanem-Tara-El-Khoury-Kevin-Antoun-435L/actions)
+
+> **Documentation availability:** The GitHub Pages link works after the repository's Pages deployment has been configured and completed successfully. You can always build and view the same documentation locally using the instructions below.
+
 ## Overview
 
-The **Security Incident Detection and Response Management System** is a Python-based backend for managing cybersecurity incidents across an organization. It is designed to help authorized users report and investigate security events, track affected IT assets and vulnerabilities, consult threat indicators, coordinate response procedures, and maintain an auditable record of important actions.
+The Security Incident Detection and Response Management System is an academic, API-based backend for tracking cybersecurity incidents and coordinating security operations. It brings together user and role management, IT assets, incident investigations, threat intelligence, audit logs, vulnerability tracking, notifications, response playbooks, and security reports.
 
-The project is organized into **nine independent REST services**. Each service runs as a separate Flask application and exposes HTTP endpoints that return JSON. Services can communicate with one another through HTTP requests to support workflows spanning multiple security operations. **No frontend is required** for Sprint 1; the APIs are exercised using Postman and automated tests.
+The project comprises **nine Flask REST services**, each with its own local development port. Each exposes JSON endpoints, uses shared infrastructure, and can communicate with other services over HTTP. A shared SQLite database supports the relational data model for this coursework project.
 
-> **Development status:** This repository began as a runnable starter scaffold. It includes service entry points, health checks, common utilities, a starter SQLite schema, and a sample inter-service request. The 54 assignment endpoints and their authentication, authorization, validation, business logic, and integration tests must be implemented and verified as development progresses. Do not interpret the list of planned capabilities below as a claim that they are finished.
+There is no required frontend for Sprint 1. The APIs can be exercised using **Postman** and **pytest**, and their Python reference documentation is generated with **Sphinx**.
 
-## Project goals
+## Services
 
-- Provide a consistent REST API for the full incident lifecycle, from reporting to resolution.
-- Enforce role-based access so users can perform only authorized operations.
-- Track organizational assets, known threats, and security vulnerabilities.
-- Record important system activity and unauthorized access attempts in audit logs.
-- Support notifications, response playbooks, and security reports.
-- Apply object-oriented design, relational database principles, input validation, version control, testing, and documentation.
+| # | Service | Module | Default port | Main responsibility |
+| --- | --- | --- | --- | --- |
+| 1 | Users & Identity | `services/users` | `5001` | Accounts, authentication, profiles, and roles |
+| 2 | Asset Management | `services/assets` | `5002` | IT asset inventory, ownership, and criticality |
+| 3 | Incident Management | `services/incidents` | `5003` | Incident reporting, assignment, investigation, and status |
+| 4 | Threat Intelligence | `services/threats` | `5004` | Threat indicators, severities, and related intelligence |
+| 5 | Security Audit Logging | `services/audit` | `5005` | Security events, activity history, and accountability |
+| 6 | Security Reports | `services/reports` | `5006` | Aggregated security data and reporting |
+| 7 | Vulnerability Management | `services/vulnerabilities` | `5007` | Vulnerabilities, affected assets, and remediation |
+| 8 | Notifications & Alerts | `services/notifications` | `5008` | Alerts, user notifications, and read status |
+| 9 | Response Playbooks | `services/playbooks` | `5009` | Incident-response procedures and action progress |
+
+The Sprint 1 specification defines **six core API operations per service (54 total)**. Refer to the generated API documentation and each service's `routes.py` for the actual route signatures and behavior. A successful health check verifies a service is reachable, not that every business workflow has been tested end to end.
 
 ## Technology stack
 
 | Area | Technology |
 | --- | --- |
 | Language | Python 3.11+ |
-| REST framework | Flask |
+| REST APIs | Flask |
 | Database | SQLite (`sqlite3`) |
 | Service communication | HTTP / JSON (`requests`) |
+| Authentication | JWT-based authentication and role-based authorization |
 | API testing | Postman |
-| Automated tests | pytest |
+| Automated testing | pytest |
 | Documentation | Python docstrings + Sphinx |
-| Version control | Git + GitHub |
-
-The starter includes `PyJWT` as a dependency for planned token-based authentication; **authentication is not implemented in the scaffold**.
-
-## Services
-
-Each service is independently runnable on a local development port. The table describes the **intended responsibilities** for Sprint 1.
-
-| # | Service | Folder | Port | Responsibility |
-| ---: | --- | --- | ---: | --- |
-| 1 | Users & Identity | `services/users` | 5001 | Registration, login, user profiles, account status, roles |
-| 2 | Asset Management | `services/assets` | 5002 | Inventory of devices, servers, owners, locations, and criticality |
-| 3 | Incident Management | `services/incidents` | 5003 | Incident reporting, analyst assignments, status lifecycle, investigation notes |
-| 4 | Threat Intelligence | `services/threats` | 5004 | Known threat indicators including IPs, domains, hashes, and signatures |
-| 5 | Security Audit Logging | `services/audit` | 5005 | Security activity, authentication attempts, changes, and access violations |
-| 6 | Security Reports | `services/reports` | 5006 | Aggregated statistics about incidents, assets, threats, vulnerabilities, and activity |
-| 7 | Vulnerability Management | `services/vulnerabilities` | 5007 | Vulnerabilities, CVE/CVSS details, affected assets, and remediation tracking |
-| 8 | Notifications & Alerts | `services/notifications` | 5008 | Security alerts, incident assignment notices, and read/unread tracking |
-| 9 | Response Playbooks | `services/playbooks` | 5009 | Ordered incident-response procedures, assigned actions, and execution progress |
-
-The assignment specifies **six core API operations for each service (54 in total)**. Routes are implemented within each service's `routes.py` module, using Flask Blueprints.
+| CI and docs publishing | GitHub Actions + GitHub Pages |
+| Collaboration | Git + GitHub pull requests |
 
 ## Architecture
 
 ```text
-                         Postman / HTTP clients
-                                   |
-                                   v
-                  +-----------------------------------+
-                  |   Nine independent Flask APIs     |
-                  |          ports 5001-5009          |
-                  +-----------------------------------+
-                        |                     |
-                        |                     +-- HTTP/JSON calls to
-                        |                         other services
-                        v
-                  +---------------------------+
-                  |  Shared SQLite database   |
-                  |  database/security_       |
-                  |  incidents.db             |
-                  +---------------------------+
+               Postman / HTTP API clients
+                           |
+                           v
+              +--------------------------+
+              | Nine independent Flask   |
+              | services (ports 5001–9)  |
+              +--------------------------+
+                       |          |
+                       |          +---- HTTP / JSON between services
+                       v
+              +--------------------------+
+              | Shared SQLite database   |
+              | database/security_       |
+              | incidents.db             |
+              +--------------------------+
 ```
 
-All services live in **one Git repository**, but each has its own Flask entry point and port. Shared infrastructure code lives in `shared/`.
+All services are in one repository. The `shared/` package provides common app setup, database access, configuration, HTTP helpers, and authentication-related code. The shared database is a deliberate simplification for an academic project; service-to-service business interactions should use the services' HTTP APIs rather than importing another service's route functions.
 
-For this academic project, the services use a **single SQLite database** with related tables and foreign keys. This simplifies the relational schema required by the assignment; it is a deliberate simplification compared with a production microservices design that might use separate data stores. Cross-service **business interactions** should occur through HTTP APIs rather than direct calls to another service's Python functions or modifications to tables owned by other services.
-
-The starter demonstrates HTTP communication with `GET /reports/dependencies`, which checks the Users and Assets health endpoints. This is an **architecture demonstration**, not a graded Reports endpoint.
-
-## Repository structure
+## Repository layout
 
 ```text
 .
+├── .github/workflows/    # CI and (when configured) documentation publishing
+├── database/            # Schema and database initialization
+├── docs/                # Sphinx configuration and source pages
+├── postman/             # Postman collections
+├── scripts/             # Multi-service launcher and health checks
 ├── services/
-│   ├── users/                  # app.py and routes.py
+│   ├── users/
 │   ├── assets/
 │   ├── incidents/
 │   ├── threats/
@@ -95,47 +88,29 @@ The starter demonstrates HTTP communication with `GET /reports/dependencies`, wh
 │   ├── vulnerabilities/
 │   ├── notifications/
 │   └── playbooks/
-├── shared/
-│   ├── app_factory.py          # Flask app creation and JSON error handling
-│   ├── auth.py                 # Authentication/authorization integration point
-│   ├── config.py               # Environment settings and service ports
-│   ├── database.py             # Request-scoped SQLite connection
-│   └── service_client.py       # HTTP helper for service-to-service requests
-├── database/
-│   ├── schema.sql              # Starter tables and foreign keys
-│   └── init_db.py              # Database initialization
-├── scripts/
-│   ├── run_all.py              # Start the nine local Flask processes
-│   └── check_services.py       # Check all /health endpoints
-├── postman/                    # Starter Postman collection
-├── docs/
-│   ├── conf.py                 # Sphinx configuration
-│   ├── index.rst               # Documentation landing page
-│   └── services.rst            # API module reference pages
-├── tests/
-│   ├── test_health.py          # Service health and error-response smoke tests
-│   └── test_schema.py          # Starter database schema tests
-├── .env.example
+├── shared/              # Shared application infrastructure
+├── tests/               # Automated tests
+├── .env.example         # Template for local environment settings
+├── .gitignore
 ├── requirements.txt
 └── README.md
 ```
-
-Each service's `app.py` launches its Flask application, while `routes.py` defines the service-specific Blueprint and API endpoints.
 
 ## Getting started
 
 ### Prerequisites
 
-Install **Python 3.11 or newer** and **Git**. Postman is recommended for testing individual requests and inspecting responses.
+- Python **3.11 or newer** and Git.
+- Postman (optional, for manually testing API calls).
+
+Run the following commands from a terminal. Use the **repository root** as the working directory for subsequent Python commands.
 
 ### 1. Clone the repository
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
-cd <YOUR_REPOSITORY_FOLDER>
+git clone https://github.com/KevinAntoun/Elias-Ghanem-Tara-El-Khoury-Kevin-Antoun-435L.git
+cd Elias-Ghanem-Tara-El-Khoury-Kevin-Antoun-435L
 ```
-
-Replace the placeholders with the actual GitHub repository URL and folder name.
 
 ### 2. Create and activate a virtual environment
 
@@ -153,13 +128,13 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3. Install dependencies and configure the environment
+### 3. Install dependencies and configure `.env`
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-Create a local `.env` from `.env.example`:
+Copy the provided template:
 
 **Windows PowerShell:**
 
@@ -173,7 +148,13 @@ Copy-Item .env.example .env
 cp .env.example .env
 ```
 
-The default database path and service ports are defined in `shared/config.py` and may be overridden through environment variables. Do not commit `.env` or secret values.
+Set `JWT_SECRET` in your **local** `.env` to a securely generated value. For example:
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+Paste the generated value into `JWT_SECRET`. The `.env.example` file also lists `HOST`, `DATABASE_PATH`, and the default ports for all nine services. Keep your `.env`, database files, and credentials out of version control.
 
 ### 4. Initialize the database
 
@@ -181,42 +162,40 @@ The default database path and service ports are defined in `shared/config.py` an
 python -m database.init_db
 ```
 
-This initializes `database/security_incidents.db` using the starter schema in `database/schema.sql`. The scaffold contains ten main tables: users, assets, incidents, investigation notes, threats, logs, vulnerabilities, notifications, playbooks, and response actions. The schema should be reviewed and extended as features are implemented.
+The local database is configured by `DATABASE_PATH` (the default is `database/security_incidents.db`). Initialization creates the schema for a new database; do not assume it migrates an existing database after schema changes. Back up any data you need before reinitializing during development.
 
 ### 5. Start the services
 
-Run all nine applications from the repository root:
+Start all nine local Flask applications:
 
 ```bash
 python -m scripts.run_all
 ```
 
-Or start an individual application while developing:
+Or start a single service, for example:
 
 ```bash
 python -m services.users.app
 ```
 
-The launcher is for **local development**, not production deployment. Stop it using **Ctrl+C**. For HTTP calls between services to succeed, both the caller and target services must be running.
+Leave the server terminal running while sending requests. Press **Ctrl+C** to stop the launcher. Inter-service operations require the corresponding dependency services to be available.
 
-## Testing the starter
+### 6. Verify the installation
 
-With the services running, open another terminal and execute:
+In another terminal (with the virtual environment active):
 
 ```bash
 python -m scripts.check_services
 python -m pytest -q
 ```
 
-Starter HTTP examples:
+Example health endpoint:
 
 ```http
 GET http://127.0.0.1:5001/health
-GET http://127.0.0.1:5003/health
-GET http://127.0.0.1:5006/reports/dependencies
 ```
 
-A healthy service returns JSON similar to:
+A healthy response resembles:
 
 ```json
 {
@@ -225,59 +204,68 @@ A healthy service returns JSON similar to:
 }
 ```
 
-The dependency demonstration checks whether the Users and Assets services respond successfully; it can return **503** if a dependency is unavailable.
+If a check fails, confirm that the correct processes are running, the corresponding port is not already in use, and your `.env` values are configured correctly.
 
-Import `postman/sprint1-starter.postman_collection.json` into Postman to run the initial health checks. Expand the collection with each completed assignment endpoint, including valid, invalid, and unauthorized cases. The grader-facing screenshots must show requests and responses from the team's actual running implementation.
+## Authentication and authorization
 
-## Authentication and access control
-
-The completed system is required to support four roles:
+The project distinguishes four roles:
 
 | Role | Intended access |
 | --- | --- |
-| **Security Administrator** | Manage accounts, assets, incidents, threats, logs, notifications, and response procedures |
-| **Security Analyst** | Investigate assigned incidents and work with authorized security data and response actions |
-| **Regular Employee/User** | Manage their own profile, report incidents, and view their own reports/notifications |
-| **Auditor** | Read-only visibility into permitted records and generation of authorized reports |
+| Security Administrator | Manage authorized users, security data, and administrative operations |
+| Security Analyst | Investigate assigned incidents and carry out permitted response activities |
+| Regular Employee / User | Manage personal data, submit incidents, and view permitted records |
+| Auditor | Read-only access to authorized records and reports |
 
-Every protected endpoint must authenticate the caller and enforce the role and resource-ownership restrictions in the Sprint 1 specification. Public registration must never allow self-assignment of privileged roles. Passwords must be hashed, account status must be respected, and permission violations must be logged.
+Protected endpoints should verify authentication and enforce role and ownership restrictions. Public registration must not allow users to grant themselves privileged roles. Do not put JWT signing keys, passwords, or real tokens in README examples or Postman collections committed to the repository.
 
-**These protections are requirements to implement, not security guarantees provided by the starter.**
+**Initial administrator setup:** Do not assume a default administrator username/password exists. Provision an administrator using the project's authorized setup procedure before performing administrator-only operations; confirm this separately from automated tests.
 
-## Documentation
+## Testing
 
-Python modules and API endpoints should have descriptive docstrings. Sphinx uses `docs/conf.py`, `docs/index.rst`, and `docs/services.rst` to generate HTML reference pages:
+Run the automated test suite from the repository root:
+
+```bash
+python -m pytest -q
+```
+
+Run live service health checks **after starting the services**:
+
+```bash
+python -m scripts.check_services
+```
+
+For manual API testing, import the collection provided under `postman/` into Postman. Include valid input, invalid input, authorization failures, and expected response codes when verifying routes. Automated tests and health checks are complementary; passing tests should not be taken as proof of deployment readiness or complete cross-service integration.
+
+## API documentation
+
+**Online:** [Browse the Sphinx API documentation on GitHub Pages](https://kevinantoun.github.io/Elias-Ghanem-Tara-El-Khoury-Kevin-Antoun-435L/)
+
+**Build locally:**
 
 ```bash
 python -m sphinx -b html docs docs/_build/html
 ```
 
-Open `docs/_build/html/index.html` locally. Keep endpoint usage examples, request/response formats, expected errors, and Postman evidence accurate as APIs are developed. The generated `docs/_build/` directory is excluded from Git.
+Then open `docs/_build/html/index.html` in your browser.
 
-## Team collaboration
+The documentation sources (`docs/*.rst`, `docs/conf.py`, and Python docstrings) are tracked in Git. Sphinx generates the HTML under `docs/_build/html/`. This build directory is intentionally excluded from version control: generated pages can be reproduced and should not cause noisy pull requests or merge conflicts.
 
-**Contributors:**
+**Publishing:** When GitHub Pages is configured to use **GitHub Actions**, a documentation deployment workflow can build Sphinx and publish the HTML from `main`. Check the [Actions tab](https://github.com/KevinAntoun/Elias-Ghanem-Tara-El-Khoury-Kevin-Antoun-435L/actions) for a successful deployment. GitHub Pages hosts **documentation only**, not the running Flask services.
 
-- **Tara El Khoury**
-- **Elias Ghanem**
-- **Kevin Antoun**
+## Collaboration
 
-Each member will own **three distinct services**, with assignments agreed upon by the team. Service ownership is deliberately not fixed in this README. Everyone contributes through their own GitHub account, documents their work, and verifies their endpoints.
+The project is developed by **Tara El Khoury, Elias Ghanem, and Kevin Antoun**.
 
-Recommended workflow:
+Use feature branches and pull requests for changes to services, tests, shared infrastructure, and documentation. Coordinate edits to `shared/`, `database/schema.sql`, and service-to-service API contracts; review and test changes before merging into `main`.
 
-1. Pull the latest `main` and create a focused feature branch (e.g., `feat/assets-create`).
-2. Implement and test changes within the relevant service directory.
-3. Coordinate any edits to shared authentication, database schema, and cross-service API contracts.
-4. Commit meaningful changes, push the branch, and open a Pull Request.
-5. Have another team member review the Pull Request before merging into `main`.
+## Project scope and limitations
 
-Code and documentation should identify the responsible student where the assignment requires attribution. Any ambiguity about including full names *inside API URLs* should be clarified with the instructor before changing specified route paths.
+This is a **coursework backend**, not a production security monitoring product. In particular:
 
-## Project scope and current limitations
+- All nine services share a local SQLite database for simplicity.
+- The Flask launcher is intended for local development, not production hosting.
+- Service health checks and unit tests do not replace a full review of authorization, integration, or security behavior.
+- The generated Sphinx site is reference documentation; it does not run the API.
 
-The target Sprint 1 submission includes the nine service implementations, all 54 required endpoints, relational database design, API validation, authentication/authorization, audit logging, real Postman execution evidence, documentation, and a common team report.
-
-The initial scaffold **does not yet implement** the graded business endpoints, authentication, service-wide RBAC, automatic audit events, notification workflows, or report aggregation. As work is merged, update this section to reflect what has actually been implemented and verified.
-
-This project is developed for academic purposes in Software Tools Lab. It is not intended for use as a production security monitoring platform.
+For detailed endpoint behavior, consult the source code, tests, and published documentation rather than relying solely on the high-level summaries in this README.
