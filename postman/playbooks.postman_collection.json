@@ -2610,7 +2610,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-                  "pm.test(\"deleted_id is returned\", function () { pm.expect(String(pm.response.json().deleted_id)).to.eql(pm.collectionVariables.get(\"playbookId\")); });"
+                  "pm.test(\"deleted_id is returned\", function () { pm.expect(String(pm.response.json().deleted_id)).to.eql(String(pm.collectionVariables.get(\"playbookId\"))); });"
                 ]
               }
             }
